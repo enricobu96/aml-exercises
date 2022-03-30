@@ -48,7 +48,7 @@ $$
 Combining the two, we then the joint density function 
 $$
 \bold{f}_\bold{x,y}(x,y) = \left\{\begin{matrix}
-1 & for\ x \in [-3,3], y\in[2x-\frac{1}{2},2x+\frac{1}{2}]\\ 
+\frac{1}{6} & for\ x \in [-3,3], y\in[2x-\frac{1}{2},2x+\frac{1}{2}]\\ 
 0 & otherwise
 \end{matrix}\right.
 $$
@@ -56,16 +56,66 @@ $$
 We can then compute the risk $R(\alpha)$:
 $$
 \begin{aligned}
-R(\alpha) &=\int_{x, y} \frac{1}{6}(y-\alpha x)^{2} d x d y \\
-&=\int_{2 x-\frac{1}{2}}^{2 x+\frac{1}{2}} \int_{-3}^{3} \frac{1}{6}(y-\alpha x)^{2} d x d y \\
-&=\int_{2 x-\frac{1}{2}}^{2 x+\frac{1}{2}} y^{2}+3 x^{2} d y \\
-&=3 \alpha^{2}+4 x^{2}+\frac{1}{12}
+R(q) &=\int_{x, y} \frac{1}{6}(y-\alpha x)^{2} d x d y \\
+&=\int_{y} \int_{x} \frac{1}{6}(y-\alpha x)^{2} d x d y \\
+&=\int_{y} \frac{-(y-\alpha x)^{3}}{18 \alpha} d y\\
+&=\frac{-(\alpha x-y)^{4}}{72\alpha}
 \end{aligned}
 $$
 
-The $alpha$ that gives the smallest risk is, therefore, $\alpha=0$.
+In order to find the alpha that gives the smalles risk, we set the last result to zero, calculating also the definite integral over $y$ and $x$; after some math (which is not reported because both too long and trivial, since it's solving a fourth-degree equation), we find that the final result is $\alpha=2$.
 
-## Task 2
+## Task b and c
+
+In order to compare the numerical approximation with the true value, I created the following code:
+
+```python
+import numpy as np
+from matplotlib import pyplot as plt
+
+"""
+Create artificial data, 1000 samples
+    - x is sampled uniformly between -3 and 3
+    - y is sampled uniformly between 2x-0.5 and 2x+0.5
+"""
+x = np.random.uniform(low=-3, high=3, size=1000)
+y = []
+for i in x:
+    y.append(np.random.uniform(low=2*i-0.5, high=2*i+0.5, size=1)[0])
+
+# R(alpha) with alpha=1.5
+M = [i for i in range(1, 1001)]
+alpha = 1.5
+R = []
+
+for i in M:
+    r = 0
+    for j in range(0, i):
+        r += (y[j]-alpha*x[j])**2
+    r/=i
+    R.append(r)
+
+# R(alpha) with alpha=2 (true value)
+alpha = 2
+R2 = []
+for i in M:
+    r = 0
+    for j in range(0, i):
+        r += (y[j]-alpha*x[j])**2
+    r/=i
+    R2.append(r)
+
+# Plot the results
+plt.plot(M, R, label='alpha = 1.5')
+plt.plot(M, R2, label='alpha = 2')
+plt.xlabel('M')
+plt.ylabel('Risk')
+plt.legend()
+```
+
+The result I got follows as a plot.
+\newpage
+![Plot of risks](./ex1.png){width=600px}
 
 # Exercise 2
 
@@ -155,3 +205,4 @@ fig.set_dpi(100)
 The figure I created, with the party labels on each point, follows.
 
 ![Plot of averages of the two PCA components](./ex5.png){width=600px}
+\newpage
