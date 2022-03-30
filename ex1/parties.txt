@@ -1,0 +1,16 @@
+2,Perussuomalaiset
+8,Kokoomus
+6,SDP
+3,Vihreät
+10,RKP
+4,Vasemmistoliitto
+9,Suomen Kristillisdemokraatit
+24,Liike Nyt
+34,Valta kuuluu kansalle
+14,Piraattipuolue
+12,Liberaalipuolue
+7,Keskusta
+29,Kristallipuolue
+38,Uudenmaan sitoutumattomien Länsi-Uudenmaan yhteislista
+11,Suomen kommunistinen puolue
+13,Eläinoikeuspuolue
