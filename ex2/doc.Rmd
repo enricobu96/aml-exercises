@@ -45,7 +45,7 @@ $$
 P(y \mid \bold{w}, \bold{x}) = \operatorname{sigm}(y\bold{w}^{\top}\bold{x})
 $$
 
-So now we have:
+So now we have
 $$
 \begin{aligned}
 &-\sum_{n} \log \left(y_{n} \mid \bold{w}, \bold{x}_{n}\right) \\
@@ -54,6 +54,149 @@ $$
 =& \sum_{n} \log \left(1+e^{-y_{n} \bold{w}^{\top} \bold{x}_{n}}\right)
 \end{aligned}
 $$
+
+which was the result we were searching for.
+
+## Task b
+
+In order to compute the gradient, as suggested we analyze the negative log-likelihood on different cases.
+
+### Case $y=-1$
+
+We have that
+$$
+\mathcal{L}=\sum_n \log(1+e^{\bold{w}^{\top}\bold{x}_n})
+$$
+
+and we want to show that
+$$
+\nabla\mathcal{L}=\bold{g}=\bold{X}^T(\bold{\mu}-\bold{0}) = \bold{X}^T\bold{\mu}
+$$
+
+with $\mu_n=\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)$. First of all, we can rewrite $\mathcal{L}$ as a sigmoid for convenience:
+$$
+\begin{aligned}
+\mathcal{L}=-\sum_n \log(\frac{1}{1+e^{\bold{w}^{\top}\bold{x}_n}}) \\
+=-\sum_n \log[\operatorname{sigm}(-\bold{w}^{\top}\bold{x}_n)] \\
+= -\sum_n \log[1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)]
+\end{aligned}
+$$
+
+Let's now compute the partial derivative with respects to $\bold{w}^{\top}$:
+$$
+\begin{aligned}
+\frac{\partial}{\partial \bold{w}^{\top}}\log[1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)] \\
+=\frac{1}{1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)}\cdot \frac{\partial}{\partial \bold{w}^{\top}}(1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n))\\
+=\frac{1}{1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)}\cdot\frac{\partial}{\partial \bold{w}^{\top}\bold{x}_n}\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)\cdot\frac{\partial}{\partial \bold{w}^{\top}}\bold{w}^{\top}\bold{x}_n
+\end{aligned}
+$$
+
+Now, we know that
+$$
+\begin{aligned}
+\frac{\partial}{\partial \bold{w}^{\top}\bold{x}}\operatorname{sigm}(\bold{w}^{\top}\bold{x}) \\
+=\frac{\partial}{\partial \bold{w}^{\top}\bold{x}}(1+e^{-\bold{w}^{\top}\bold{x}})^{-1} = e^{-\bold{w}^{\top}\bold{x}}(1+e^{-\bold{w}^{\top}\bold{x}})^{-2} \\
+= \frac{1}{1+e^{-\bold{w}^{\top}\bold{x}}}\cdot\frac{e^{-\bold{w}^{\top}\bold{x}}}{1+e^{-\bold{w}^{\top}\bold{x}}} \\
+= \operatorname{sigm}(\bold{w}^{\top}\bold{x})(1-{sigm}(\bold{w}^{\top}\bold{x}))
+\end{aligned}
+$$
+
+Therefore, the previous partial derivative becomes the following:
+$$
+\begin{aligned}
+\frac{1}{1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)}\cdot(1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n))\cdot\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)\bold{x}_n\\
+=\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)\bold{x}_n
+\end{aligned}
+$$
+
+We can now compute the gradient and therefore prove the equivalence:
+$$
+\begin{aligned}
+\nabla\mathcal{L} = \frac{\partial}{\partial \bold{w}^{\top}}\mathcal{L} = \operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)\bold{x}_n \\
+\Rightarrow -\sum_n\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)\bold{x}_n=\bold{X}^{\top}\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)=\bold{X}^{\top}\mu
+\end{aligned}
+$$
+
+### Case $y=1$
+
+The procedure for this case is almost the same. This time we have that
+$$
+\mathcal{L}=\sum_n \log(1+e^{-\bold{w}^{\top}\bold{x}_n})
+$$
+
+and we want to show that
+$$
+\nabla\mathcal{L}=\bold{g}=\bold{X}^T(\bold{\mu}-\bold{1})
+$$
+
+with $\mu=\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)$ and $\bold{1}$ a vector of ones. As we did before, we can rewrite $\mathcal{L}$ as a sigmoid for convenience:
+$$
+\begin{aligned}
+\mathcal{L}=-\sum_n \log(\frac{1}{1+e^{-\bold{w}^{\top}\bold{x}_n}}) \\
+=-\sum_n \log[\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)]
+\end{aligned}
+$$
+
+Let's now compute the partial derivative with respects to $\bold{w}^{\top}$:
+$$
+\begin{aligned}
+\frac{\partial}{\partial \bold{w}^{\top}}\log[\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)] \\
+=\frac{1}{\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)}\cdot \frac{\partial}{\partial \bold{w}^{\top}}(\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n))\\
+=\frac{1}{\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)}\cdot\frac{\partial}{\partial \bold{w}^{\top}\bold{x}_n}\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)\cdot\frac{\partial}{\partial \bold{w}^{\top}}\bold{w}^{\top}\bold{x}_n\\
+=\frac{1}{\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)}\cdot(1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n))\cdot\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)\bold{x}_n \\
+=(1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n))\bold{x}_n
+\end{aligned} 
+$$
+
+We can now compute the gradient and therefore prove the equivalence in the same way. In the end we get
+$$
+\nabla\mathcal{L}=\bold{X}^{\top}(\mu - \bold{1})
+$$
+
+which is the result we had to find.
+
+Now we can prove also that the Hessian matrix $\bold{H}$ of the loss is equal to
+$$
+\bold{H}=\bold{X}^{\top}\bold{S}\bold{X}
+$$
+
+We can compute the Hessian starting from the gradient we calculated in the previous step. For convenience, let's first put the two cases together into a general result:
+$$
+\begin{aligned}
+\nabla\mathcal{L} = (\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)-y_n)\bold{x}_n
+\end{aligned}
+$$
+
+(Note: $y_n$ can be either 0 or 1 in this case, but this is a more general result, thus without loss of generality). The Hessian is then
+$$
+\begin{aligned}
+\nabla^2\mathcal{L}=\frac{\partial}{\partial\bold{w}\partial\bold{w}^{\top}}\mathcal{L} = \bold{x}_n^{\top}\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)(1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n))\bold{x}_n
+\end{aligned}
+$$
+
+And therefore we have that
+$$
+\begin{aligned}
+\sum_n\bold{x}_n^{\top}\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n)(1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}_n))\bold{x}_n \\
+= \bold{X}^{\top}\operatorname{sigm}(\bold{w}^{\top}\bold{x})(1-\operatorname{sigm}(\bold{w}^{\top}\bold{x}))\bold{X} \\
+= \bold{X}^{\top}\bold{S}\bold{X}
+\end{aligned}
+$$
+
+## Task c
+
+In order to prove that the Hessian matrix $\bold{H}$ is positive semidefinite, we have to prove that $\bold{v}^{\top}\bold{H}\bold{v}\geqslant 0$ for a generic vector $\bold{v}\in\mathbb{R}^d$.
+
+Therefore, if we are able to prove that $\bold{X}^{\top}\bold{S}\bold{X}\geqslant 0$, _i.e._ $\bold{S}$ is positive semidefinite, we have also proved that $\bold{H}$ is positive semidefinite.
+
+Now, $\bold{S}$ is positive semidefinite because its eigenvalues are positive; in fact, $\bold{S}$ has only one eigenvalue
+$$
+\lambda = -[\mu(1-\mu)]^2+\mu(1-\mu)
+$$
+
+and this eigenvalue is always greater than 0 because of the definition of $\mu$, which is $0<\operatorname{sigm}(\bold{w}^{\top}\bold{x})\leqslant 1$.
+
+Wrapping up, $\bold{S}$ is positive semidefinite, therefore $\bold{H}$ is positive semidefinite, therefore the loss is convex.
 
 # Exercise 2
 
@@ -71,6 +214,7 @@ The results of this task are illustrated in the picture below. The legend and ex
 
 ![Support Vector Machines components.](./ex2.png){width=600px}
 
+\newpage
 ## Task b
 
 We have the SVM primal problem given by
